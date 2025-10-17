@@ -1,0 +1,120 @@
+<!-- UNIVERSAL IMAGE CONVERTER — Self-contained Blogger version -->
+<div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;color:#222;">
+
+  <!-- Static header bar -->
+  <header style="padding:18px 20px;border-bottom:1px solid rgba(0,0,0,0.06);text-align:center;">
+    <h1 style="margin:0;font-size:1.8rem;">📸 Universal Image Converter</h1>
+    <p style="margin:4px 0 0 0;color:rgba(0,0,0,0.6);font-size:0.9rem;">Fast · Simple · Smart</p>
+  </header>
+
+  <!-- Converter Container -->
+  <div id="uic-container" style="max-width:800px;margin:30px auto;padding:15px;">
+
+    <!-- Drag & Drop area -->
+    <div id="drop-area" style="
+      border:2px dashed #ccc;border-radius:12px;padding:35px;text-align:center;
+      cursor:pointer;transition:0.3s;position:relative;
+    ">
+      <p id="drop-text" style="margin:0;font-size:1.05rem;color:#555;">Drag & drop an image here or click to select</p>
+      <input type="file" id="fileElem" accept="image/*" style="display:none;">
+    </div>
+
+    <!-- Preview -->
+    <div id="preview-container" style="text-align:center;margin-top:20px;display:none;">
+      <canvas id="preview-canvas" style="max-width:100%;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,0.1);"></canvas>
+    </div>
+
+    <!-- Conversion Options -->
+    <div style="margin-top:20px;display:none;" id="options-container">
+      <label for="format-select" style="font-weight:600;">Select output format:</label>
+      <select id="format-select" style="margin-left:10px;padding:6px;border-radius:5px;border:1px solid #ccc;">
+        <option value="png">PNG</option>
+        <option value="jpeg">JPEG</option>
+        <option value="webp">WEBP</option>
+        <option value="gif">GIF</option>
+        <option value="pdf">PDF</option>
+      </select>
+      <br>
+      <button id="convertBtn" style="
+        margin-top:15px;padding:10px 20px;border:none;border-radius:6px;background:#28a745;color:white;
+        font-weight:600;cursor:pointer;transition:0.2s;">Convert & Download</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const dropArea = document.getElementById('drop-area');
+  const fileInput = document.getElementById('fileElem');
+  const dropText = document.getElementById('drop-text');
+  const previewContainer = document.getElementById('preview-container');
+  const previewCanvas = document.getElementById('preview-canvas');
+  const optionsContainer = document.getElementById('options-container');
+  const formatSelect = document.getElementById('format-select');
+  const convertBtn = document.getElementById('convertBtn');
+
+  let uploadedImage = null;
+
+  // Drag & Drop
+  dropArea.addEventListener('click', () => fileInput.click());
+  dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.style.borderColor='#007bff'; });
+  dropArea.addEventListener('dragleave', e => { e.preventDefault(); dropArea.style.borderColor='#ccc'; });
+  dropArea.addEventListener('drop', e => {
+    e.preventDefault();
+    dropArea.style.borderColor='#ccc';
+    handleFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', e => handleFiles(e.target.files));
+
+  function handleFiles(files) {
+    if(files.length===0) return;
+    const file = files[0];
+    if(!file.type.startsWith('image/')) { alert('Please upload an image file'); return; }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const ctx = previewCanvas.getContext('2d');
+        previewCanvas.width = img.width > 800 ? 800 : img.width;
+        previewCanvas.height = img.height * (previewCanvas.width / img.width);
+        ctx.clearRect(0,0,previewCanvas.width,previewCanvas.height);
+        ctx.drawImage(img,0,0,previewCanvas.width,previewCanvas.height);
+        previewContainer.style.display='block';
+        optionsContainer.style.display='block';
+        uploadedImage = img;
+      }
+      img.src = e.target.result;
+    }
+    reader.readAsDataURL(file);
+  }
+
+  // Conversion & Download
+  convertBtn.addEventListener('click', () => {
+    if(!uploadedImage) return;
+    const format = formatSelect.value;
+    if(format==='pdf'){
+      const pdfCanvas = document.createElement('canvas');
+      pdfCanvas.width = uploadedImage.width>800?800:uploadedImage.width;
+      pdfCanvas.height = uploadedImage.height*(pdfCanvas.width/uploadedImage.width);
+      const ctx = pdfCanvas.getContext('2d');
+      ctx.drawImage(uploadedImage,0,0,pdfCanvas.width,pdfCanvas.height);
+      const dataURL = pdfCanvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'converted_image.png';
+      link.click();
+    } else {
+      const canvas = document.createElement('canvas');
+      canvas.width = uploadedImage.width>800?800:uploadedImage.width;
+      canvas.height = uploadedImage.height*(canvas.width/uploadedImage.width);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(uploadedImage,0,0,canvas.width,canvas.height);
+      const dataURL = canvas.toDataURL('image/'+format,0.9);
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'converted_image.'+format;
+      link.click();
+    }
+  });
+                             </script>
+                             
