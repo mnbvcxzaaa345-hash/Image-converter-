@@ -1,28 +1,28 @@
-<!-- UNIVERSAL IMAGE CONVERTER — Complete Blogger Version -->
+<!-- UNIVERSAL IMAGE CONVERTER — Self-contained Blogger version -->
 <div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;color:#222;">
 
-  <!-- Static Header -->
+  <!-- Static header bar -->
   <header style="padding:18px 20px;border-bottom:1px solid rgba(0,0,0,0.06);text-align:center;">
     <h1 style="margin:0;font-size:1.8rem;">📸 Universal Image Converter</h1>
     <p style="margin:4px 0 0 0;color:rgba(0,0,0,0.6);font-size:0.9rem;">Fast · Simple · Smart</p>
   </header>
 
   <!-- Converter Container -->
-  <div id="uic-container" style="max-width:900px;margin:30px auto;padding:15px;">
+  <div id="uic-container" style="max-width:800px;margin:30px auto;padding:15px;">
 
-    <!-- Drag & Drop Area -->
+    <!-- Drag & Drop area -->
     <div id="drop-area" style="
       border:2px dashed #ccc;border-radius:12px;padding:35px;text-align:center;
       cursor:pointer;transition:0.3s;position:relative;
     ">
-      <p id="drop-text" style="margin:0;font-size:1.05rem;color:#555;">
-        Drag & drop images here or click to select (multiple allowed)
-      </p>
-      <input type="file" id="fileElem" accept="image/*" multiple style="display:none;">
+      <p id="drop-text" style="margin:0;font-size:1.05rem;color:#555;">Drag & drop an image here or click to select</p>
+      <input type="file" id="fileElem" accept="image/*" style="display:none;">
     </div>
 
-    <!-- Preview Gallery -->
-    <div id="preview-container" style="display:none;margin-top:20px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;"></div>
+    <!-- Preview -->
+    <div id="preview-container" style="text-align:center;margin-top:20px;display:none;">
+      <canvas id="preview-canvas" style="max-width:100%;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,0.1);"></canvas>
+    </div>
 
     <!-- Conversion Options -->
     <div style="margin-top:20px;display:none;" id="options-container">
@@ -37,125 +37,84 @@
       <br>
       <button id="convertBtn" style="
         margin-top:15px;padding:10px 20px;border:none;border-radius:6px;background:#28a745;color:white;
-        font-weight:600;cursor:pointer;transition:0.2s;">Convert & Download All</button>
+        font-weight:600;cursor:pointer;transition:0.2s;">Convert & Download</button>
     </div>
-
   </div>
+
 </div>
 
 <script>
   const dropArea = document.getElementById('drop-area');
   const fileInput = document.getElementById('fileElem');
+  const dropText = document.getElementById('drop-text');
   const previewContainer = document.getElementById('preview-container');
+  const previewCanvas = document.getElementById('preview-canvas');
   const optionsContainer = document.getElementById('options-container');
   const formatSelect = document.getElementById('format-select');
   const convertBtn = document.getElementById('convertBtn');
 
-  let uploadedImages = []; // {img:Image, name:string}
+  let uploadedImage = null;
 
-  // Drag & Drop + Click
+  // Drag & Drop
   dropArea.addEventListener('click', () => fileInput.click());
   dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.style.borderColor='#007bff'; });
   dropArea.addEventListener('dragleave', e => { e.preventDefault(); dropArea.style.borderColor='#ccc'; });
-  dropArea.addEventListener('drop', e => { e.preventDefault(); dropArea.style.borderColor='#ccc'; handleFiles(e.dataTransfer.files); });
+  dropArea.addEventListener('drop', e => {
+    e.preventDefault();
+    dropArea.style.borderColor='#ccc';
+    handleFiles(e.dataTransfer.files);
+  });
   fileInput.addEventListener('change', e => handleFiles(e.target.files));
 
   function handleFiles(files) {
     if(files.length===0) return;
-    for(let i=0;i<files.length;i++){
-      const file = files[i];
-      if(!file.type.startsWith('image/')) continue;
-      const reader = new FileReader();
-      reader.onload = function(e){
-        const img = new Image();
-        img.onload = function(){
-          uploadedImages.push({img:img,name:file.name});
-          updatePreview();
-        }
-        img.src = e.target.result;
+    const file = files[0];
+    if(!file.type.startsWith('image/')) { alert('Please upload an image file'); return; }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const ctx = previewCanvas.getContext('2d');
+        previewCanvas.width = img.width > 800 ? 800 : img.width;
+        previewCanvas.height = img.height * (previewCanvas.width / img.width);
+        ctx.clearRect(0,0,previewCanvas.width,previewCanvas.height);
+        ctx.drawImage(img,0,0,previewCanvas.width,previewCanvas.height);
+        previewContainer.style.display='block';
+        optionsContainer.style.display='block';
+        uploadedImage = img;
       }
-      reader.readAsDataURL(file);
+      img.src = e.target.result;
     }
+    reader.readAsDataURL(file);
   }
 
-  function updatePreview(){
-    previewContainer.innerHTML='';
-    uploadedImages.forEach((item,index)=>{
-      const wrapper = document.createElement('div');
-      wrapper.style.textAlign='center';
-      wrapper.style.position='relative';
-      wrapper.style.display='inline-block';
-
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = item.img.width>300?300:item.img.width;
-      canvas.height = item.img.height*(canvas.width/item.img.width);
-      ctx.drawImage(item.img,0,0,canvas.width,canvas.height);
-      canvas.style.border='1px solid #ddd';
-      canvas.style.borderRadius='8px';
-      canvas.style.display='block';
-      canvas.style.marginBottom='4px';
-
-      // Filename label
-      const label = document.createElement('div');
-      label.style.fontSize='0.85rem';
-      label.style.color='rgba(0,0,0,0.7)';
-      label.style.maxWidth='300px';
-      label.style.overflow='hidden';
-      label.style.textOverflow='ellipsis';
-      label.style.whiteSpace='nowrap';
-      label.innerText = item.name;
-
-      // Remove button
-      const removeBtn = document.createElement('button');
-      removeBtn.innerText='✖';
-      removeBtn.style.position='absolute';
-      removeBtn.style.top='4px';
-      removeBtn.style.right='4px';
-      removeBtn.style.border='none';
-      removeBtn.style.background='rgba(0,0,0,0.5)';
-      removeBtn.style.color='white';
-      removeBtn.style.borderRadius='50%';
-      removeBtn.style.width='20px';
-      removeBtn.style.height='20px';
-      removeBtn.style.cursor='pointer';
-      removeBtn.addEventListener('click',()=>{
-        uploadedImages.splice(index,1);
-        updatePreview();
-        if(uploadedImages.length===0) optionsContainer.style.display='none';
-      });
-
-      wrapper.appendChild(canvas);
-      wrapper.appendChild(label);
-      wrapper.appendChild(removeBtn);
-      previewContainer.appendChild(wrapper);
-    });
-    previewContainer.style.display=uploadedImages.length>0?'flex':'none';
-    optionsContainer.style.display=uploadedImages.length>0?'block':'none';
-  }
-
-  // Convert & Download All
-  convertBtn.addEventListener('click', ()=>{
-    if(uploadedImages.length===0) return;
+  // Conversion & Download
+  convertBtn.addEventListener('click', () => {
+    if(!uploadedImage) return;
     const format = formatSelect.value;
-    uploadedImages.forEach((item,index)=>{
+    if(format==='pdf'){
+      const pdfCanvas = document.createElement('canvas');
+      pdfCanvas.width = uploadedImage.width>800?800:uploadedImage.width;
+      pdfCanvas.height = uploadedImage.height*(pdfCanvas.width/uploadedImage.width);
+      const ctx = pdfCanvas.getContext('2d');
+      ctx.drawImage(uploadedImage,0,0,pdfCanvas.width,pdfCanvas.height);
+      const dataURL = pdfCanvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'converted_image.png';
+      link.click();
+    } else {
       const canvas = document.createElement('canvas');
+      canvas.width = uploadedImage.width>800?800:uploadedImage.width;
+      canvas.height = uploadedImage.height*(canvas.width/uploadedImage.width);
       const ctx = canvas.getContext('2d');
-      canvas.width = item.img.width>800?800:item.img.width;
-      canvas.height = item.img.height*(canvas.width/item.img.width);
-      ctx.drawImage(item.img,0,0,canvas.width,canvas.height);
-
-      if(format==='pdf'){
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = item.name.replace(/\.[^/.]+$/,"") + '.png';
-        link.click();
-      } else {
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/'+format,0.9);
-        link.download = item.name.replace(/\.[^/.]+$/,"") + '.'+format;
-        link.click();
-      }
-    });
+      ctx.drawImage(uploadedImage,0,0,canvas.width,canvas.height);
+      const dataURL = canvas.toDataURL('image/'+format,0.9);
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'converted_image.'+format;
+      link.click();
+    }
   });
-</script>
+                             </script>
+                             
