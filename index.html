@@ -1,170 +1,161 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Universal Image Converter Pro - Convert, compress, and download images in multiple formats directly in your browser.">
-  <meta name="author" content="Universal Tools">
-  <title>Universal Image Converter Pro</title>
-  <style>
-    :root {
-      --primary:#007bff;--success:#28a745;--warning:#ffc107;
-      --bg:#f4f7f6;--text:#333;--card:#fff
-    }
-    body.dark {
-      --bg:#1e1e1e;--text:#e0e0e0;--card:#2c2c2c
-    }
-    body {
-      font-family:'Segoe UI',Tahoma,sans-serif;
-      background:var(--bg);color:var(--text);
-      display:flex;justify-content:center;align-items:center;
-      min-height:100vh;margin:0;transition:.4s
-    }
-    .converter-container {
-      background:var(--card);padding:40px;border-radius:16px;
-      box-shadow:0 10px 25px rgba(0,0,0,.1);
-      width:90%;max-width:550px;text-align:center;
-      transition:.4s
-    }
-    h1 {color:var(--primary);margin-bottom:20px;font-size:1.8em}
-    .guide {color:#666;margin:10px 0;font-size:.95em}
-    #dropZone {
-      border:2px dashed #ccc;border-radius:10px;
-      padding:30px;cursor:pointer;margin-bottom:20px;
-      transition:.3s
-    }
-    #dropZone.dragover {border-color:var(--primary);background:#eef6ff}
-    #imageInput {display:none}
-    #preview {
-      display:none;width:100%;border-radius:10px;margin-top:15px
-    }
-    #outputFormat,#quality {
-      width:100%;padding:10px;border:1px solid #ccc;border-radius:6px;
-      margin-top:10px;font-size:1em;background:var(--card);color:var(--text)
-    }
-    #convertButton {
-      background:var(--success);color:#fff;padding:12px;border:none;
-      border-radius:6px;font-size:1.1em;cursor:pointer;width:100%;
-      margin-top:15px;transition:.3s
-    }
-    #convertButton:hover {transform:scale(1.03);background:#218838}
-    #progressBar {
-      width:100%;background:#ddd;border-radius:6px;height:10px;
-      margin-top:15px;overflow:hidden;display:none
-    }
-    #progress {height:10px;background:var(--primary);width:0%;transition:.3s}
-    .download-btn {
-      background:var(--warning);border:none;padding:12px;border-radius:6px;
-      font-size:1.1em;width:100%;margin-top:20px;cursor:pointer;font-weight:700
-    }
-    .download-btn:hover {background:#e0a800}
-    #statusMessage {margin-top:20px;font-style:italic;color:var(--primary)}
-    .theme-toggle {
-      position:absolute;top:15px;right:20px;cursor:pointer;
-      background:none;border:none;font-size:1.2em;color:var(--text);transition:.3s
-    }
-  </style>
-</head>
-<body>
-  <button class="theme-toggle" id="themeToggle">🌙</button>
-  <div class="converter-container">
-    <h1>📸 Universal Image Converter Pro</h1>
-    <div id="dropZone">📁 Drag & Drop images here or click to upload</div>
-    <input type="file" id="imageInput" accept="image/*" multiple>
-    <img id="preview" alt="Preview">
-    <div class="conversion-options">
-      <label class="guide">Choose output format:</label>
-      <select id="outputFormat">
+<!-- UNIVERSAL IMAGE CONVERTER — Complete Blogger Version -->
+<div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;color:#222;">
+
+  <!-- Static Header -->
+  <header style="padding:18px 20px;border-bottom:1px solid rgba(0,0,0,0.06);text-align:center;">
+    <h1 style="margin:0;font-size:1.8rem;">📸 Universal Image Converter</h1>
+    <p style="margin:4px 0 0 0;color:rgba(0,0,0,0.6);font-size:0.9rem;">Fast · Simple · Smart</p>
+  </header>
+
+  <!-- Converter Container -->
+  <div id="uic-container" style="max-width:900px;margin:30px auto;padding:15px;">
+
+    <!-- Drag & Drop Area -->
+    <div id="drop-area" style="
+      border:2px dashed #ccc;border-radius:12px;padding:35px;text-align:center;
+      cursor:pointer;transition:0.3s;position:relative;
+    ">
+      <p id="drop-text" style="margin:0;font-size:1.05rem;color:#555;">
+        Drag & drop images here or click to select (multiple allowed)
+      </p>
+      <input type="file" id="fileElem" accept="image/*" multiple style="display:none;">
+    </div>
+
+    <!-- Preview Gallery -->
+    <div id="preview-container" style="display:none;margin-top:20px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;"></div>
+
+    <!-- Conversion Options -->
+    <div style="margin-top:20px;display:none;" id="options-container">
+      <label for="format-select" style="font-weight:600;">Select output format:</label>
+      <select id="format-select" style="margin-left:10px;padding:6px;border-radius:5px;border:1px solid #ccc;">
         <option value="png">PNG</option>
         <option value="jpeg">JPEG</option>
         <option value="webp">WEBP</option>
+        <option value="gif">GIF</option>
         <option value="pdf">PDF</option>
       </select>
-      <label class="guide">Compression Quality (10–100):</label>
-      <input type="range" id="quality" min="10" max="100" value="80">
+      <br>
+      <button id="convertBtn" style="
+        margin-top:15px;padding:10px 20px;border:none;border-radius:6px;background:#28a745;color:white;
+        font-weight:600;cursor:pointer;transition:0.2s;">Convert & Download All</button>
     </div>
-    <button id="convertButton" disabled>⚙️ Convert Image(s)</button>
-    <div id="progressBar"><div id="progress"></div></div>
-    <p id="statusMessage">Upload or drag an image to start converting!</p>
-    <a id="downloadLink" style="display:none;" download>
-      <button class="download-btn">⬇️ Download Converted File(s)</button>
-    </a>
+
   </div>
+</div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script>
+  const dropArea = document.getElementById('drop-area');
+  const fileInput = document.getElementById('fileElem');
+  const previewContainer = document.getElementById('preview-container');
+  const optionsContainer = document.getElementById('options-container');
+  const formatSelect = document.getElementById('format-select');
+  const convertBtn = document.getElementById('convertBtn');
 
-  <script>
-  document.addEventListener("DOMContentLoaded",()=>{
-    const dropZone=document.getElementById('dropZone'),
-          input=document.getElementById('imageInput'),
-          convertBtn=document.getElementById('convertButton'),
-          outputFormat=document.getElementById('outputFormat'),
-          quality=document.getElementById('quality'),
-          preview=document.getElementById('preview'),
-          status=document.getElementById('statusMessage'),
-          downloadLink=document.getElementById('downloadLink'),
-          progressBar=document.getElementById('progressBar'),
-          progress=document.getElementById('progress'),
-          themeToggle=document.getElementById('themeToggle');
-    let files=[];
-    dropZone.onclick=()=>input.click();
-    ['dragover','drop','dragleave'].forEach(ev=>dropZone.addEventListener(ev,e=>e.preventDefault()));
-    dropZone.addEventListener('dragover',()=>dropZone.classList.add('dragover'));
-    dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
-    dropZone.addEventListener('drop',e=>{
-      dropZone.classList.remove('dragover');
-      files=[...e.dataTransfer.files];displayPreview();
-    });
-    input.addEventListener('change',e=>{files=[...e.target.files];displayPreview();});
-    function displayPreview(){
-      if(files.length){convertBtn.disabled=false;
-        preview.src=URL.createObjectURL(files[0]);
-        preview.style.display='block';
-        status.textContent=`${files.length} file(s) ready for conversion.`;
-      }
-    }
-    convertBtn.onclick=async()=>{
-      if(!files.length)return;
-      convertBtn.disabled=true;progressBar.style.display='block';
-      progress.style.width='0%';status.textContent="Converting...";
-      const zip=files.length>1?new JSZip():null;let converted=[];
-      for(let i=0;i<files.length;i++){
-        const f=files[i],img=await createImageBitmap(f),
-              c=document.createElement('canvas');
-        c.width=img.width;c.height=img.height;
-        c.getContext('2d').drawImage(img,0,0);
-        const q=quality.value/100;let blob;
-        if(outputFormat.value==='pdf'){
-          const {jsPDF}=window.jspdf;
-          const pdf=new jsPDF({orientation:'portrait',unit:'px',format:[img.width,img.height]});
-          pdf.addImage(c.toDataURL('image/jpeg',q),'JPEG',0,0,img.width,img.height);
-          blob=pdf.output('blob');
-        }else{
-          blob=await new Promise(r=>c.toBlob(r,`image/${outputFormat.value}`,q));
+  let uploadedImages = []; // {img:Image, name:string}
+
+  // Drag & Drop + Click
+  dropArea.addEventListener('click', () => fileInput.click());
+  dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.style.borderColor='#007bff'; });
+  dropArea.addEventListener('dragleave', e => { e.preventDefault(); dropArea.style.borderColor='#ccc'; });
+  dropArea.addEventListener('drop', e => { e.preventDefault(); dropArea.style.borderColor='#ccc'; handleFiles(e.dataTransfer.files); });
+  fileInput.addEventListener('change', e => handleFiles(e.target.files));
+
+  function handleFiles(files) {
+    if(files.length===0) return;
+    for(let i=0;i<files.length;i++){
+      const file = files[i];
+      if(!file.type.startsWith('image/')) continue;
+      const reader = new FileReader();
+      reader.onload = function(e){
+        const img = new Image();
+        img.onload = function(){
+          uploadedImages.push({img:img,name:file.name});
+          updatePreview();
         }
-        if(zip)zip.file(`${f.name.split('.')[0]}.${outputFormat.value}`,blob);
-        else converted.push(blob);
-        progress.style.width=`${((i+1)/files.length)*100}%`;
+        img.src = e.target.result;
       }
-      let blobOut;
-      if(zip){
-        blobOut=await zip.generateAsync({type:'blob'});
-        downloadLink.download="converted_images.zip";
-      }else{
-        blobOut=converted[0];
-        downloadLink.download=`converted.${outputFormat.value}`;
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function updatePreview(){
+    previewContainer.innerHTML='';
+    uploadedImages.forEach((item,index)=>{
+      const wrapper = document.createElement('div');
+      wrapper.style.textAlign='center';
+      wrapper.style.position='relative';
+      wrapper.style.display='inline-block';
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = item.img.width>300?300:item.img.width;
+      canvas.height = item.img.height*(canvas.width/item.img.width);
+      ctx.drawImage(item.img,0,0,canvas.width,canvas.height);
+      canvas.style.border='1px solid #ddd';
+      canvas.style.borderRadius='8px';
+      canvas.style.display='block';
+      canvas.style.marginBottom='4px';
+
+      // Filename label
+      const label = document.createElement('div');
+      label.style.fontSize='0.85rem';
+      label.style.color='rgba(0,0,0,0.7)';
+      label.style.maxWidth='300px';
+      label.style.overflow='hidden';
+      label.style.textOverflow='ellipsis';
+      label.style.whiteSpace='nowrap';
+      label.innerText = item.name;
+
+      // Remove button
+      const removeBtn = document.createElement('button');
+      removeBtn.innerText='✖';
+      removeBtn.style.position='absolute';
+      removeBtn.style.top='4px';
+      removeBtn.style.right='4px';
+      removeBtn.style.border='none';
+      removeBtn.style.background='rgba(0,0,0,0.5)';
+      removeBtn.style.color='white';
+      removeBtn.style.borderRadius='50%';
+      removeBtn.style.width='20px';
+      removeBtn.style.height='20px';
+      removeBtn.style.cursor='pointer';
+      removeBtn.addEventListener('click',()=>{
+        uploadedImages.splice(index,1);
+        updatePreview();
+        if(uploadedImages.length===0) optionsContainer.style.display='none';
+      });
+
+      wrapper.appendChild(canvas);
+      wrapper.appendChild(label);
+      wrapper.appendChild(removeBtn);
+      previewContainer.appendChild(wrapper);
+    });
+    previewContainer.style.display=uploadedImages.length>0?'flex':'none';
+    optionsContainer.style.display=uploadedImages.length>0?'block':'none';
+  }
+
+  // Convert & Download All
+  convertBtn.addEventListener('click', ()=>{
+    if(uploadedImages.length===0) return;
+    const format = formatSelect.value;
+    uploadedImages.forEach((item,index)=>{
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = item.img.width>800?800:item.img.width;
+      canvas.height = item.img.height*(canvas.width/item.img.width);
+      ctx.drawImage(item.img,0,0,canvas.width,canvas.height);
+
+      if(format==='pdf'){
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = item.name.replace(/\.[^/.]+$/,"") + '.png';
+        link.click();
+      } else {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/'+format,0.9);
+        link.download = item.name.replace(/\.[^/.]+$/,"") + '.'+format;
+        link.click();
       }
-      downloadLink.href=URL.createObjectURL(blobOut);
-      downloadLink.style.display='block';
-      status.textContent="✅ Conversion complete!";
-      convertBtn.disabled=false;
-    };
-    themeToggle.onclick=()=>{
-      document.body.classList.toggle('dark');
-      themeToggle.textContent=document.body.classList.contains('dark')?'☀️':'🌙';
-    };
+    });
   });
-  </script>
-</body>
-</html>
+</script>
