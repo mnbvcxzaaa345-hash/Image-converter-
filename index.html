@@ -1,96 +1,310 @@
-<!-- 🌟 Universal Image Converter | Blogger Page -->
-<div id="universal-converter-page" style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;color:#333;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universal Image Converter Pro</title>
 
-  <!-- 🖼️ Banner Section -->
-  <section style="background:linear-gradient(135deg,#007bff,#00c6ff);color:white;text-align:center;padding:60px 20px;border-radius:0 0 40px 40px;">
-    <h1 style="font-size:2.2em;margin-bottom:10px;">📸 Universal Image Converter</h1>
-    <p style="font-size:1.1em;max-width:700px;margin:auto;">
-      Convert, compress, and download your images in multiple formats including PNG, JPEG, WEBP, GIF, and PDF — instantly and securely, right from your browser.
-    </p>
-  </section>
+  <style>
+    :root {
+      --primary: #007bff;
+      --success: #28a745;
+      --warning: #ffc107;
+      --bg: #f4f7f6;
+      --text: #333;
+      --card-bg: #fff;
+    }
 
-  <!-- ✨ SEO Meta Info -->
-  <meta name="description" content="Free online image converter tool. Convert, compress and download images in PNG, JPG, WEBP, PDF and GIF formats. Works instantly in your browser.">
-  <meta name="keywords" content="image converter, jpg to png, png to jpg, image compressor, webp, pdf, gif, free online tool">
+    body.dark {
+      --bg: #1e1e1e;
+      --text: #e0e0e0;
+      --card-bg: #2c2c2c;
+    }
 
-  <!-- 🧩 Converter Embed -->
-  <div id="converter-container" style="max-width:1000px;margin:60px auto;text-align:center;padding:0 15px;">
-    <style>
-      #converter-frame {
-        width: 100%;
-        height: 850px;
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-      }
-      #converter-frame:hover {
-        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-        transform: scale(1.01);
-      }
-      .loader {
-        border: 6px solid #f3f3f3;
-        border-top: 6px solid #007bff;
-        border-radius: 50%;
-        width: 55px;
-        height: 55px;
-        animation: spin 1s linear infinite;
-        margin: 60px auto;
-      }
-      @keyframes spin { 0% {transform:rotate(0deg);} 100% {transform:rotate(360deg);} }
-      #loading-text { color:#555;font-size:1.1em; }
-      .fallback-link {
-        display:inline-block;
-        margin-top:15px;
-        padding:12px 25px;
-        background-color:#007bff;
-        color:white;
-        border-radius:6px;
-        text-decoration:none;
-        font-weight:bold;
-        transition:background 0.3s;
-      }
-      .fallback-link:hover { background-color:#0056b3; }
-    </style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      transition: background-color 0.4s, color 0.4s;
+    }
 
-    <div id="loader">
-      <div class="loader"></div>
-      <div id="loading-text">Loading Universal Image Converter...</div>
+    .converter-container {
+      background: var(--card-bg);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 550px;
+      text-align: center;
+      transition: background 0.4s;
+    }
+
+    h1 {
+      color: var(--primary);
+      margin-bottom: 20px;
+      font-size: 1.8em;
+    }
+
+    .guide {
+      color: #666;
+      margin: 12px 0;
+      font-size: 0.95em;
+    }
+
+    #dropZone {
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 30px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    #dropZone.dragover {
+      border-color: var(--primary);
+      background: #eef6ff;
+    }
+
+    #imageInput {
+      display: none;
+    }
+
+    #preview {
+      display: none;
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+
+    #outputFormat, #quality {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 1em;
+      background: var(--card-bg);
+      color: var(--text);
+    }
+
+    #convertButton {
+      background-color: var(--success);
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1em;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
+      transition: transform 0.2s, background-color 0.3s;
+    }
+
+    #convertButton:hover {
+      transform: scale(1.03);
+      background-color: #218838;
+    }
+
+    #progressBar {
+      width: 100%;
+      background-color: #ddd;
+      border-radius: 6px;
+      height: 10px;
+      margin-top: 15px;
+      overflow: hidden;
+      display: none;
+    }
+
+    #progress {
+      height: 10px;
+      background-color: var(--primary);
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .download-btn {
+      background-color: var(--warning);
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 1.1em;
+      width: 100%;
+      margin-top: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .download-btn:hover {
+      background-color: #e0a800;
+    }
+
+    #statusMessage {
+      margin-top: 20px;
+      font-style: italic;
+      color: var(--primary);
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 1.2em;
+      color: var(--text);
+      transition: color 0.3s;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="theme-toggle" id="themeToggle">🌙</button>
+
+  <div class="converter-container">
+    <h1>📸 Universal Image Converter Pro</h1>
+
+    <div id="dropZone">📁 Drag & Drop images here or click to upload</div>
+    <input type="file" id="imageInput" accept="image/*" multiple>
+
+    <img id="preview" alt="Preview">
+
+    <div class="conversion-options">
+      <label class="guide">Choose output format:</label>
+      <select id="outputFormat">
+        <option value="png">PNG</option>
+        <option value="jpeg">JPEG</option>
+        <option value="webp">WEBP</option>
+        <option value="pdf">PDF</option>
+      </select>
+
+      <label class="guide">Compression Quality (10–100):</label>
+      <input type="range" id="quality" min="10" max="100" value="80">
     </div>
 
-    <iframe 
-      id="converter-frame"
-      src="https://mnbvcxzaaa345-hash.github.io/Image-converter-/"
-      onload="document.getElementById('loader').style.display='none';"
-      loading="lazy"
-      allowfullscreen>
-    </iframe>
+    <button id="convertButton" disabled>⚙️ Convert Image(s)</button>
 
-    <p>
-      If the converter doesn’t load, 
-      <a href="https://mnbvcxzaaa345-hash.github.io/Image-converter-/" target="_blank" class="fallback-link">
-        Open Full Page Converter
-      </a>
-    </p>
+    <div id="progressBar"><div id="progress"></div></div>
+
+    <p id="statusMessage">Upload or drag an image to start converting!</p>
+    <a id="downloadLink" style="display:none;" download>
+      <button class="download-btn">⬇️ Download Converted File(s)</button>
+    </a>
   </div>
 
-  <!-- 💬 Tool Description -->
-  <section style="max-width:900px;margin:50px auto;text-align:center;">
-    <h2 style="color:#007bff;">Why Choose Our Converter?</h2>
-    <ul style="list-style:none;padding:0;font-size:1.05em;line-height:1.8em;">
-      <li>✅ Fast, secure, and runs entirely in your browser — no uploads!</li>
-      <li>✅ Supports popular formats: PNG, JPG, WEBP, GIF, and PDF.</li>
-      <li>✅ Built-in image compression for smaller file sizes.</li>
-      <li>✅ Simple drag-and-drop interface for quick conversions.</li>
-      <li>✅ Works perfectly on mobile and desktop devices.</li>
-    </ul>
-  </section>
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const imageInput = document.getElementById('imageInput');
+    const convertButton = document.getElementById('convertButton');
+    const outputFormat = document.getElementById('outputFormat');
+    const quality = document.getElementById('quality');
+    const preview = document.getElementById('preview');
+    const statusMessage = document.getElementById('statusMessage');
+    const downloadLink = document.getElementById('downloadLink');
+    const progressBar = document.getElementById('progressBar');
+    const progress = document.getElementById('progress');
+    const themeToggle = document.getElementById('themeToggle');
 
-  <!-- ⚡ Call-to-Action Footer -->
-  <footer style="background:#f7f9fa;text-align:center;padding:40px 20px;border-top:2px solid #eee;border-radius:20px 20px 0 0;">
-    <h2 style="margin-bottom:10px;color:#007bff;">Ready to Convert Your Images?</h2>
-    <p style="font-size:1.1em;color:#555;">Upload your file and experience lightning-fast conversions now.</p>
-    <a href="https://mnbvcxzaaa345-hash.github.io/Image-converter-/" target="_blank" class="fallback-link">Launch Converter</a>
-  </footer>
+    let files = [];
 
-</div>
+    dropZone.addEventListener('click', () => imageInput.click());
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      files = Array.from(e.dataTransfer.files);
+      handleFiles();
+    });
+    imageInput.addEventListener('change', e => {
+      files = Array.from(e.target.files);
+      handleFiles();
+    });
+
+    function handleFiles() {
+      if (files.length) {
+        convertButton.disabled = false;
+        preview.src = URL.createObjectURL(files[0]);
+        preview.style.display = 'block';
+        statusMessage.textContent = `${files.length} file(s) ready for conversion.`;
+      }
+    }
+
+    convertButton.addEventListener('click', async () => {
+      if (!files.length) return;
+      convertButton.disabled = true;
+      progressBar.style.display = 'block';
+      progress.style.width = '0%';
+      statusMessage.textContent = "Converting... Please wait.";
+
+      const zip = files.length > 1 ? new JSZip() : null;
+      let convertedFiles = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const img = await createImageBitmap(file);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+
+        const q = quality.value / 100;
+        let blob;
+
+        if (outputFormat.value === 'pdf') {
+          const pdfCanvas = document.createElement('canvas');
+          pdfCanvas.width = img.width;
+          pdfCanvas.height = img.height;
+          pdfCanvas.getContext('2d').drawImage(img, 0, 0);
+          const imgData = pdfCanvas.toDataURL('image/jpeg', q);
+          const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [img.width, img.height] });
+          pdf.addImage(imgData, 'JPEG', 0, 0, img.width, img.height);
+          blob = pdf.output('blob');
+        } else {
+          blob = await new Promise(r => canvas.toBlob(r, `image/${outputFormat.value}`, q));
+        }
+
+        if (zip) zip.file(`${file.name.split('.')[0]}.${outputFormat.value}`, blob);
+        else convertedFiles.push(blob);
+
+        progress.style.width = `${((i + 1) / files.length) * 100}%`;
+      }
+
+      let downloadBlob;
+      if (zip) {
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        downloadBlob = zipBlob;
+        downloadLink.download = "converted_images.zip";
+      } else {
+        downloadBlob = convertedFiles[0];
+        downloadLink.download = `converted.${outputFormat.value}`;
+      }
+
+      downloadLink.href = URL.createObjectURL(downloadBlob);
+      downloadLink.style.display = 'block';
+      statusMessage.textContent = "✅ Conversion complete!";
+      convertButton.disabled = false;
+    });
+
+    // Dark / Light Theme
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      themeToggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    });
+  </script>
+
+  <!-- External libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</body>
+</html>
