@@ -1,95 +1,96 @@
-<!-- UNIVERSAL IMAGE CONVERTER — Blogger-ready Embed (Auto-adaptive Header) -->
-<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #222;">
+<!-- 🌟 Universal Image Converter | Blogger Page -->
+<div id="universal-converter-page" style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;color:#333;">
 
-  <!-- Header (static) -->
-  <header style="
-    padding:18px 20px;
-    border-bottom:1px solid rgba(0,0,0,0.06);
-    display:flex;
-    align-items:center;
-    gap:14px;
-    flex-wrap:wrap;
-  ">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <div style="
-        width:46px;height:46px;border-radius:10px;
-        display:flex;align-items:center;justify-content:center;
-        font-size:20px;font-weight:700;
-        background:linear-gradient(135deg,#007bff,#00c6ff);
-        color:white;
-      ">📸</div>
-      <div>
-        <div style="font-size:1.15rem;font-weight:700;line-height:1;">Universal Image Converter</div>
-        <div style="font-size:0.85rem;color:rgba(0,0,0,0.6);margin-top:2px;">Fast · Simple · Smart</div>
-      </div>
-    </div>
+  <!-- 🖼️ Banner Section -->
+  <section style="background:linear-gradient(135deg,#007bff,#00c6ff);color:white;text-align:center;padding:60px 20px;border-radius:0 0 40px 40px;">
+    <h1 style="font-size:2.2em;margin-bottom:10px;">📸 Universal Image Converter</h1>
+    <p style="font-size:1.1em;max-width:700px;margin:auto;">
+      Convert, compress, and download your images in multiple formats including PNG, JPEG, WEBP, GIF, and PDF — instantly and securely, right from your browser.
+    </p>
+  </section>
 
-    <!-- Right side small helper -->
-    <div style="margin-left:auto;font-size:0.9rem;color:rgba(0,0,0,0.55);">
-      <span class="converter-hint">Opens in-page (or click Open Full Page)</span>
-    </div>
-  </header>
+  <!-- ✨ SEO Meta Info -->
+  <meta name="description" content="Free online image converter tool. Convert, compress and download images in PNG, JPG, WEBP, PDF and GIF formats. Works instantly in your browser.">
+  <meta name="keywords" content="image converter, jpg to png, png to jpg, image compressor, webp, pdf, gif, free online tool">
 
-  <!-- Adaptive styles for dark mode -->
-  <style>
-    @media (prefers-color-scheme: dark) {
-      #uic-container { color: #e8eef6; }
-      #uic-header { border-bottom-color: rgba(255,255,255,0.06); }
-      .uic-loader { border-top-color: #58a6ff; }
-      .uic-fallback { background: #1f6feb; color: #fff; }
-      .uic-loading-text { color: #cbd7ee; }
-    }
-    @media (prefers-color-scheme: light) {
-      .uic-fallback { background: #007bff; color: #fff; }
-      .uic-loading-text { color: #555; }
-    }
-  </style>
-
-  <!-- Main embed container -->
-  <div id="uic-container" style="max-width:1100px;margin:28px auto;padding:0 16px;">
-
-    <!-- Loader -->
-    <div id="uic-loader" style="text-align:center;padding:44px 10px;">
-      <div class="uic-loader" style="
-        display:inline-block;
-        width:60px;height:60px;border-radius:50%;
-        border:6px solid rgba(0,0,0,0.08);border-top:6px solid #007bff;
-        animation: uic-spin 1s linear infinite;
-        margin-bottom:12px;
-      "></div>
-      <div class="uic-loading-text" style="font-size:1.05rem;color:#555;">
-        Loading Universal Image Converter...
-      </div>
-    </div>
-
+  <!-- 🧩 Converter Embed -->
+  <div id="converter-container" style="max-width:1000px;margin:60px auto;text-align:center;padding:0 15px;">
     <style>
-      @keyframes uic-spin { 0%{transform:rotate(0);}100%{transform:rotate(360deg);} }
+      #converter-frame {
+        width: 100%;
+        height: 850px;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+      }
+      #converter-frame:hover {
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        transform: scale(1.01);
+      }
+      .loader {
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid #007bff;
+        border-radius: 50%;
+        width: 55px;
+        height: 55px;
+        animation: spin 1s linear infinite;
+        margin: 60px auto;
+      }
+      @keyframes spin { 0% {transform:rotate(0deg);} 100% {transform:rotate(360deg);} }
+      #loading-text { color:#555;font-size:1.1em; }
+      .fallback-link {
+        display:inline-block;
+        margin-top:15px;
+        padding:12px 25px;
+        background-color:#007bff;
+        color:white;
+        border-radius:6px;
+        text-decoration:none;
+        font-weight:bold;
+        transition:background 0.3s;
+      }
+      .fallback-link:hover { background-color:#0056b3; }
     </style>
 
-    <!-- Responsive iframe -->
-    <div style="border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(2,6,23,0.06);margin-top:18px;">
-      <iframe id="uic-frame"
-        src="https://mnbvcxzaaa345-hash.github.io/Image-converter-/"
-        loading="lazy"
-        allow="fullscreen"
-        style="width:100%;height:820px;border:0;display:block;"
-        onload="(function(){var l=document.getElementById('uic-loader'); if(l) l.style.display='none';})();">
-      </iframe>
+    <div id="loader">
+      <div class="loader"></div>
+      <div id="loading-text">Loading Universal Image Converter...</div>
     </div>
 
-    <!-- Fallback / CTA -->
-    <div style="text-align:center;margin-top:18px;">
-      <a class="uic-fallback" href="https://mnbvcxzaaa345-hash.github.io/Image-converter-/" target="_blank"
-         style="display:inline-block;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600;">
+    <iframe 
+      id="converter-frame"
+      src="https://mnbvcxzaaa345-hash.github.io/Image-converter-/"
+      onload="document.getElementById('loader').style.display='none';"
+      loading="lazy"
+      allowfullscreen>
+    </iframe>
+
+    <p>
+      If the converter doesn’t load, 
+      <a href="https://mnbvcxzaaa345-hash.github.io/Image-converter-/" target="_blank" class="fallback-link">
         Open Full Page Converter
       </a>
-    </div>
-
-    <!-- Short feature summary -->
-    <div style="max-width:860px;margin:28px auto 0;text-align:center;color:rgba(0,0,0,0.65);font-size:0.98rem;">
-      <p style="margin:0 0 8px 0;">
-        Convert images to PNG, JPG, WEBP, GIF and PDF. Drag & drop, batch convert, compress and download — all in your browser.
-      </p>
-    </div>
+    </p>
   </div>
+
+  <!-- 💬 Tool Description -->
+  <section style="max-width:900px;margin:50px auto;text-align:center;">
+    <h2 style="color:#007bff;">Why Choose Our Converter?</h2>
+    <ul style="list-style:none;padding:0;font-size:1.05em;line-height:1.8em;">
+      <li>✅ Fast, secure, and runs entirely in your browser — no uploads!</li>
+      <li>✅ Supports popular formats: PNG, JPG, WEBP, GIF, and PDF.</li>
+      <li>✅ Built-in image compression for smaller file sizes.</li>
+      <li>✅ Simple drag-and-drop interface for quick conversions.</li>
+      <li>✅ Works perfectly on mobile and desktop devices.</li>
+    </ul>
+  </section>
+
+  <!-- ⚡ Call-to-Action Footer -->
+  <footer style="background:#f7f9fa;text-align:center;padding:40px 20px;border-top:2px solid #eee;border-radius:20px 20px 0 0;">
+    <h2 style="margin-bottom:10px;color:#007bff;">Ready to Convert Your Images?</h2>
+    <p style="font-size:1.1em;color:#555;">Upload your file and experience lightning-fast conversions now.</p>
+    <a href="https://mnbvcxzaaa345-hash.github.io/Image-converter-/" target="_blank" class="fallback-link">Launch Converter</a>
+  </footer>
+
 </div>
